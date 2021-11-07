@@ -25,7 +25,13 @@ const accountTypeChecker = (accountBalanceHistory) => {
         // console.log('\n Balance History sheet has single entry.');
         // console.log('\n accountBalanceHistory[0].account.balance.amount = ', accountBalanceHistory[0].account.balance.amount)
         if (accountBalanceHistory[0].account && accountBalanceHistory[0].account.balance && !isNaN(accountBalanceHistory[0].account.balance.amount)) {
-            return 'B';
+            if (accountBalanceHistory.length === 2) {
+                if (accountBalanceHistory[1].account && accountBalanceHistory[1].account.balance && !isNaN(accountBalanceHistory[1].account.balance.amount)) {
+                    return 'B';
+                }
+            } else {
+                return 'B';
+            }
         }
         throw new Error('INVALID_DATA');
     }
@@ -35,23 +41,25 @@ const accountTypeChecker = (accountBalanceHistory) => {
 
     let result = !(accountBalanceHistory.every((element, index) => {
 
-        console.log('\n\n ******** \n element = ', element)
-        console.log(' index = ', index);
+        // console.log('\n\n ******** \n element = ', element)
+        // console.log(' index = ', index);
 
         if (index < accountBalanceHistory.length - 1) {
 
             /* Validate if object has the nested property. And check if the value is Number */
-            if (!accountBalanceHistory[index + 1].account || !accountBalanceHistory[index + 1].account.balance || isNaN(accountBalanceHistory[index + 1].account.balance.amount) || !element.account || !element.account.balance || isNaN(element.account.balance.amount)) {
+            if (!accountBalanceHistory[index + 1].account || !accountBalanceHistory[index + 1].account.balance
+                || isNaN(accountBalanceHistory[index + 1].account.balance.amount) || !element.account
+                || !element.account.balance || isNaN(element.account.balance.amount)) {
                 throw new Error('INVALID_DATA');
             }
 
             let currDiffAmount = accountBalanceHistory[index + 1].account.balance.amount - element.account.balance.amount;
-            
-            console.log(' ==> currDiffAmount = ', currDiffAmount);
-            
+
+            // console.log(' ==> currDiffAmount = ', currDiffAmount);
+
             if (index === 0) {
                 diffAmount = currDiffAmount;
-                console.log(' ==> diffAmount = ', diffAmount);
+                // console.log(' ==> diffAmount = ', diffAmount);
             } else {
                 return currDiffAmount === diffAmount;
             }
